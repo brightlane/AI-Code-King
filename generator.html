@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily SEO Blog Generator</title>
+
+<style>
+body { font-family: Arial; padding:20px; background:#f5f5f5; }
+textarea, input { width:100%; padding:10px; margin:10px 0; }
+button { padding:12px 20px; background:#1e90ff; color:white; border:none; cursor:pointer; }
+pre { background:#000; color:#0f0; padding:15px; overflow:auto; }
+</style>
+
+</head>
+<body>
+
+<h1>Daily SEO Blog Generator</h1>
+
+<input id="topic" placeholder="Enter blog topic (e.g. workflow automation tips)" />
+
+<button onclick="generate()">Generate Blog HTML</button>
+
+<h3>Output:</h3>
+<pre id="output"></pre>
+
+<script>
+function generate() {
+  const topic = document.getElementById("topic").value || "workflow automation";
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${topic} | Daily SEO Guide</title>
+<meta name="description" content="Daily SEO blog about ${topic} with workflow automation insights and productivity strategies." />
+<meta name="keywords" content="${topic}, workflow automation, productivity tools, SaaS growth, business efficiency" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://brightlane.github.io/AI-Code-King/blog-${today}.html" />
+
+<style>
+body{font-family:Arial;line-height:1.7;margin:0;background:#fff}
+header{background:#1e90ff;color:white;padding:40px;text-align:center}
+main{max-width:900px;margin:auto;padding:20px}
+a{color:#ff4500;font-weight:bold}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>${topic}</h1>
+<p>Daily AI-powered SEO blog - ${today}</p>
+</header>
+
+<main>
+
+<h2>Introduction</h2>
+<p>This article explores <b>${topic}</b> in depth with practical insights for businesses and individuals looking to improve productivity and automation systems.</p>
+
+<h2>Core Insights</h2>
+<ul>
+<li>Workflow optimization strategies</li>
+<li>Automation best practices</li>
+<li>Scalable business systems</li>
+</ul>
+
+<h2>Related Content</h2>
+<ul>
+<li><a href="blog.html">Main Blog</a></li>
+<li><a href="blog-part4.html">Advanced Automation</a></li>
+<li><a href="blog-part8.html">Performance Scaling</a></li>
+<li><a href="index.html">Home</a></li>
+</ul>
+
+<h2>Recommended Tool</h2>
+<p>
+<a href="https://www.linkconnector.com/ta.php?lc=007949000012007981&url=https%3A%2F%2Fwww.youware.com%2F&atid=YouWareWeb">
+Try YouWare for Workflow Automation
+</a>
+</p>
+
+</main>
+
+</body>
+</html>`;
+
+  document.getElementById("output").textContent = html;
+}
+</script>
+
+</body>
+</html>
