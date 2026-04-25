@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block nothing important (you want full indexing for SEO)
+
+# Sitemap location
+Sitemap: https://brightlane.github.io/AI-Code-King/sitemap.xml
+
+# Crawl delay (optional, GitHub Pages ignores it but harmless)
+Crawl-delay: 0
