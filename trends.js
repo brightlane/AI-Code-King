@@ -1,17 +1,16 @@
-const fetch = require("node-fetch");
+import fetch from 'node-fetch'; // For node-fetch v3.x
 
-async function getTrends() {
-  const url =
-    "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US";
+const url = 'https://api.example.com/trends';  // Replace with the actual URL you're fetching trends from
 
-  const res = await fetch(url);
-  const text = await res.text();
+const fetchTrends = async () => {
+    try {
+        const response = await fetch(url);
+        const trends = await response.json();
 
-  const matches = [...text.matchAll(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)];
+        console.log("Trends Data: ", trends); // Process the trends data here
+    } catch (error) {
+        console.error("Error fetching trends data: ", error);
+    }
+};
 
-  const trends = matches.slice(2, 12).map(m => m[1]);
-
-  return trends;
-}
-
-module.exports = { getTrends };
+fetchTrends();
