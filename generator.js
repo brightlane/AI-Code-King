@@ -1,53 +1,29 @@
-/**
- * VULTURE ENGINE - GENERATOR (STABLE VERSION)
- * No imports, no module errors.
- */
-
 const fs = require('fs');
 const path = require('path');
 
-async function generateVulturePages() {
-    console.log("🚀 Vulture Engine: Initializing Build #6...");
-
-    const niches = ["Remote Work", "SEO Automation", "SaaS Growth", "Crypto Tools", "AI Content"];
-    const locations = ["Global", "USA", "UK", "Europe", "Asia"];
-
-    // 1. Load the Template
-    const templatePath = path.join(process.cwd(), 'blog.html');
+async function run() {
+    const archivesDir = path.join(process.cwd(), 'archives');
     
+    // CRITICAL: Create the directory BEFORE writing files
+    if (!fs.existsSync(archivesDir)) {
+        fs.mkdirSync(archivesDir, { recursive: true });
+        console.log("📁 Created /archives folder");
+    }
+
+    const templatePath = path.join(process.cwd(), 'blog.html');
     if (!fs.existsSync(templatePath)) {
-        console.error("❌ Error: blog.html template missing!");
-        return;
+        console.error("❌ blog.html is missing from root!");
+        process.exit(1);
     }
 
     let template = fs.readFileSync(templatePath, 'utf8');
-
-    // 2. The Generation Loop
-    for (let niche of niches) {
-        for (let loc of locations) {
-            let pageContent = template
-                .replace(/{{niche}}/g, niche)
-                .replace(/{{location}}/g, loc)
-                .replace(/{{date}}/g, new Date().toDateString());
-
-            // Inject the necessary class for your affiliate.js and yield_optimizer.js
-            pageContent = pageContent.replace('class="cta-button"', 'class="cta-button vulture-link"');
-
-            const fileName = `blog-${niche.toLowerCase().replace(/\s+/g, '-')}-${loc.toLowerCase()}.html`;
-            
-            // Ensure the directory exists
-            const dir = path.join(process.cwd(), 'archives');
-            if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-
-            const filePath = path.join(dir, fileName);
-            fs.writeFileSync(filePath, pageContent);
-            
-            console.log(`✅ Success: ${fileName}`);
-        }
+    
+    // Test run of 5 pages
+    for (let i = 1; i <= 5; i++) {
+        const fileName = `page-${i}.html`;
+        fs.writeFileSync(path.join(archivesDir, fileName), template);
+        console.log(`✅ Created ${fileName}`);
     }
 }
 
-generateVulturePages().catch(err => {
-    console.error("Vulture Crash:", err);
-    process.exit(1);
-});
+run().catch(err => { console.error(err); process.exit(1); });
