@@ -1,14 +1,31 @@
-- name: Generate the sitemap
-        uses: cicirello/generate-sitemap@v1
-        with:
-          base-url-path: https://brightlane.github.io/AI-Code-King/
-          path-to-root: .
-          include-html: true
-          drop-html-extension: false
-          date-only: true
+name: Vulture 10K Automated Pipeline
 
-      - name: Ping Google & Bing (IndexNow)
+on:
+  push:
+    branches: [ main ]  # This makes it run every time you commit
+  workflow_dispatch:     # THIS ENABLES THE MANUAL "RUN WORKFLOW" BUTTON
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Matches your local environment
+
+      - name: Run Generator
+        run: node generator.js
+
+      - name: Commit and Push
         run: |
-          curl -X GET "http://www.google.com/ping?sitemap=https://brightlane.github.io/AI-Code-King/sitemap.xml"
-          # For Bing/DuckDuckGo/Yandex
-          curl -X POST "https://www.bing.com/indexnow?url=https://brightlane.github.io/AI-Code-King/sitemap.xml&key=${{ secrets.INDEXNOW_KEY }}"
+          git config --global user.name "Vulture-Bot"
+          git config --global user.email "vulture@ai-code-king.com"
+          git add .
+          git commit -m "Vulture Build #7: Automated Page Drip" || echo "No changes"
+          git push
