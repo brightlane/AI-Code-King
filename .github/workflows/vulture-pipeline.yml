@@ -2,22 +2,26 @@ name: Vulture 10K Automated Pipeline
 
 on:
   push:
-    branches: [ main ]  # This makes it run every time you commit
-  workflow_dispatch:     # THIS ENABLES THE MANUAL "RUN WORKFLOW" BUTTON
+    branches: [ main ]
+  workflow_dispatch:
   schedule:
     - cron: '0 2 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # Ensures the bot has permission to write back to the repo
+      contents: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history so rebase works
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Matches your local environment
+          node-version: '18'
 
       - name: Run Generator
         run: node generator.js
@@ -26,6 +30,10 @@ jobs:
         run: |
           git config --global user.name "Vulture-Bot"
           git config --global user.email "vulture@ai-code-king.com"
-          git add .
-          git commit -m "Vulture Build #7: Automated Page Drip" || echo "No changes"
-          git push
+          
+          # Pull latest changes to avoid "rejected" error
+          git pull origin main --rebase
+          
+          git add archives/*.html
+          git commit -m "Vulture Build: Added New SEO Pages" || echo "No changes to commit"
+          git push origin main
