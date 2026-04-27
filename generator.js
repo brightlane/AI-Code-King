@@ -1,18 +1,28 @@
-import fs from 'fs';
-import path from 'path';
+/**
+ * VULTURE ENGINE - GENERATOR (STABLE VERSION)
+ * No imports, no module errors.
+ */
+
+const fs = require('fs');
+const path = require('path');
 
 async function generateVulturePages() {
-    console.log("🚀 Vulture Engine: Initializing...");
+    console.log("🚀 Vulture Engine: Initializing Build #6...");
 
-    // 1. Data Source (In a real scenario, this comes from your trends.js/rss.js output)
     const niches = ["Remote Work", "SEO Automation", "SaaS Growth", "Crypto Tools", "AI Content"];
     const locations = ["Global", "USA", "UK", "Europe", "Asia"];
 
-    // 2. Load the Template
+    // 1. Load the Template
     const templatePath = path.join(process.cwd(), 'blog.html');
+    
+    if (!fs.existsSync(templatePath)) {
+        console.error("❌ Error: blog.html template missing!");
+        return;
+    }
+
     let template = fs.readFileSync(templatePath, 'utf8');
 
-    // 3. The Loop (Generating 25 variations per run to stay safe)
+    // 2. The Generation Loop
     for (let niche of niches) {
         for (let loc of locations) {
             let pageContent = template
@@ -20,28 +30,24 @@ async function generateVulturePages() {
                 .replace(/{{location}}/g, loc)
                 .replace(/{{date}}/g, new Date().toDateString());
 
-            // Ensure the vulture-link class is present for affiliate.js to hook into
+            // Inject the necessary class for your affiliate.js and yield_optimizer.js
             pageContent = pageContent.replace('class="cta-button"', 'class="cta-button vulture-link"');
 
-            const fileName = `blog-${niche.toLowerCase().replace(' ', '-')}-${loc.toLowerCase()}.html`;
-            const filePath = path.join(process.cwd(), 'archives', fileName);
+            const fileName = `blog-${niche.toLowerCase().replace(/\s+/g, '-')}-${loc.toLowerCase()}.html`;
+            
+            // Ensure the directory exists
+            const dir = path.join(process.cwd(), 'archives');
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-            // Create directory if missing
-            if (!fs.existsSync('archives')) fs.mkdirSync('archives');
-
+            const filePath = path.join(dir, fileName);
             fs.writeFileSync(filePath, pageContent);
-            console.log(`✅ Generated: ${fileName}`);
+            
+            console.log(`✅ Success: ${fileName}`);
         }
     }
-}const randomInternalLinks = `
-    <footer style="margin-top: 50px; padding: 20px; background: #eee;">
-        <h4>Related 2026 Growth Guides:</h4>
-        <ul>
-            <li><a href="blog-saas-london.html">Automating SaaS in London</a></li>
-            <li><a href="blog-real-estate-miami.html">Real Estate Efficiency: Miami Edition</a></li>
-            <li><a href="blog-crypto-tokyo.html">Web3 Workflows in Tokyo</a></li>
-        </ul>
-    </footer>
-`;
+}
 
-generateVulturePages().catch(console.error);
+generateVulturePages().catch(err => {
+    console.error("Vulture Crash:", err);
+    process.exit(1);
+});
