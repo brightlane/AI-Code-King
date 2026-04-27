@@ -1,40 +1,14 @@
-name: Vulture 10K Automated Pipeline
-
-on:
-  schedule:
-    - cron: '0 2 * * *' # Runs at 2 AM daily
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+- name: Generate the sitemap
+        uses: cicirello/generate-sitemap@v1
         with:
-          node-version: '20'
+          base-url-path: https://brightlane.github.io/AI-Code-King/
+          path-to-root: .
+          include-html: true
+          drop-html-extension: false
+          date-only: true
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Fetch Trends & News
+      - name: Ping Google & Bing (IndexNow)
         run: |
-          node trends.js
-          node rss.js
-
-      - name: Generate SEO Pages
-        run: node generator.js
-
-      - name: Update Sitemap
-        run: node sitemap_gen.py # Or your JS equivalent
-
-      - name: Push to GitHub Pages
-        run: |
-          git config --global user.name "Vulture-Bot"
-          git config --global user.email "vulture@ai-code-king.com"
-          git add .
-          git commit -m "Vulture Feed: New content for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-          git push
+          curl -X GET "http://www.google.com/ping?sitemap=https://brightlane.github.io/AI-Code-King/sitemap.xml"
+          # For Bing/DuckDuckGo/Yandex
+          curl -X POST "https://www.bing.com/indexnow?url=https://brightlane.github.io/AI-Code-King/sitemap.xml&key=${{ secrets.INDEXNOW_KEY }}"
