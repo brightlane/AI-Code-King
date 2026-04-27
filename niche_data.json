@@ -1,0 +1,10 @@
+{
+  "industries": [
+    "Real Estate", "Gyms", "Lawyers", "Dentists", "Plumbers", 
+    "SaaS", "E-commerce", "Solar Energy", "Roofing", "Pet Stores"
+  ],
+  "locations": [
+    "New-York", "London", "Berlin", "Tokyo", "Sydney", 
+    "Paris", "Toronto", "Chicago", "Miami", "Austin"
+  ]
+}
