@@ -1,45 +1,6 @@
-/**
- * FILE: affiliate.js
- * PURPOSE: Obfuscate Affiliate IDs and handle dynamic link injection
- * VULTURE STRATEGY: Prevents scraping and allows easy global ID updates
- */
-
-(function() {
-    // Your IDs encoded in Base64 to hide them from simple crawlers
-    // LC ID: 007949000012007981
-    // ATID: YouWareWeb
-    const config = {
-        encodedLC: "MDA3OTQ5MDAwMDEyMDA3OTgx", 
-        encodedATID: "WW91V2FyZVdlYg==",
-        targetURL: "https%3A%2F%2Fwww.youware.com%2F"
-    };
-
-    function decode(str) {
-        return atob(str);
-    }
-
-    function injectLinks() {
-        const lc = decode(config.encodedLC);
-        const atid = decode(config.encodedATID);
-        const fullURL = `https://www.linkconnector.com/ta.php?lc=${lc}&url=${config.targetURL}&atid=${atid}`;
-
-        // Find all elements with class 'vulture-link'
-        const links = document.querySelectorAll('.vulture-link');
-        
-        links.forEach(link => {
-            link.href = fullURL;
-            
-            // Optional: If it's a button, add an event listener for extra tracking
-            link.addEventListener('click', () => {
-                console.log("Vulture Link Triggered: " + atid);
-            });
-        });
-    }
-
-    // Run on load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectLinks);
-    } else {
-        injectLinks();
-    }
-})();
+{
+  "atid": "YouWareWeb",
+  "lc": "007949000012007981",
+  "obfuscated_atid": "WW91V2FyZVdlYg==",
+  "obfuscated_lc": "MDA3OTQ5MDAwMDEyMDA3OTgx"
+}
