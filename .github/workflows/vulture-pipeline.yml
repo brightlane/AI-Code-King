@@ -5,18 +5,18 @@ on:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *' # Every night at 2 AM
+    - cron: '0 2 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # CRITICAL: Gives the bot permission to save pages
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Necessary for rebase logic
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,7 +32,12 @@ jobs:
         run: |
           git config --global user.name "Vulture-Bot"
           git config --global user.email "vulture@ai-code-king.com"
-          git pull origin main --rebase
+          
+          # Stage the new content first
           git add archives/ rss_data.json
-          git commit -m "Vulture Build: Added 100+ Matrix Pages" || echo "No changes"
+          
+          # Pull changes with autostash to avoid "dirty tree" errors
+          git pull origin main --rebase --autostash
+          
+          git commit -m "Vulture Build: Successful Matrix Generation" || echo "No changes to commit"
           git push origin main
