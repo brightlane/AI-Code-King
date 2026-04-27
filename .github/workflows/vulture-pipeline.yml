@@ -5,35 +5,34 @@ on:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 2 * * *' # Every night at 2 AM
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: # Ensures the bot has permission to write back to the repo
+    permissions:
       contents: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches all history so rebase works
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      - name: Run Generator
-        run: node generator.js
+      - name: Run Scrapers & Generator
+        run: |
+          node rss.js
+          node generator.js
 
-      - name: Commit and Push
+      - name: Sync and Push
         run: |
           git config --global user.name "Vulture-Bot"
           git config --global user.email "vulture@ai-code-king.com"
-          
-          # Pull latest changes to avoid "rejected" error
           git pull origin main --rebase
-          
-          git add archives/*.html
-          git commit -m "Vulture Build: Added New SEO Pages" || echo "No changes to commit"
+          git add archives/ rss_data.json
+          git commit -m "Vulture Build: Added 100+ Matrix Pages" || echo "No changes"
           git push origin main
