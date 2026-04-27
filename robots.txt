@@ -1,10 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /private/
 
-# Block nothing important (you want full indexing for SEO)
-
-# Sitemap location
+# The Vulture Map
 Sitemap: https://brightlane.github.io/AI-Code-King/sitemap.xml
 
-# Crawl delay (optional, GitHub Pages ignores it but harmless)
-Crawl-delay: 0
+# Crawl Delay to keep the site safe in 2026
+Crawl-delay: 5
