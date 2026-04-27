@@ -1,37 +1,38 @@
 const fs = require('fs');
 const path = require('path');
 
-// Matrix data
-const niches = ["Real Estate", "SaaS", "Crypto", "Travel", "Marketing", "Fitness"];
-const cities = ["New-York", "London", "Tokyo", "Berlin", "Austin", "Miami", "Toronto"];
-
 async function run() {
-    const template = fs.readFileSync('blog.html', 'utf8');
-    const news = JSON.parse(fs.readFileSync('rss_data.json', 'utf8') || "[]");
+    console.log("🚀 Vulture Engine: Building 10K Matrix...");
+    
+    const baseDir = path.join(process.cwd(), 'archives');
+    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir, { recursive: true });
 
-    console.log("🚀 Vulture Matrix Scaling Started...");
+    const template = fs.readFileSync('blog.html', 'utf8');
+    const newsData = JSON.parse(fs.readFileSync('rss_data.json', 'utf8') || "[]");
+
+    const niches = ["Real Estate", "SaaS", "Crypto", "Travel", "Legal"];
+    const cities = ["London", "New-York", "Tokyo", "Berlin", "Austin", "Miami"];
 
     for (let niche of niches) {
-        const dir = path.join('archives', niche.toLowerCase());
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        const subDir = path.join(baseDir, niche.toLowerCase());
+        if (!fs.existsSync(subDir)) fs.mkdirSync(subDir, { recursive: true });
 
         for (let city of cities) {
-            // Grab a random news item to make the page unique for SEO
-            const dailyHeadline = news[Math.floor(Math.random() * news.length)] || { title: "Global Productivity Update" };
-
+            const headline = newsData[Math.floor(Math.random() * newsData.length)]?.title || "Market Update 2026";
+            
             let page = template
                 .replace(/{{niche}}/g, niche)
                 .replace(/{{location}}/g, city)
-                .replace(/{{headline}}/g, dailyHeadline.title)
+                .replace(/{{headline}}/g, headline)
                 .replace(/{{date}}/g, new Date().toDateString());
 
-            // Ensure the affiliate.js class is present
+            // Ensure our affiliate.js can find and swap the links
             page = page.replace('class="cta-button"', 'class="cta-button vulture-link"');
 
-            fs.writeFileSync(path.join(dir, `${city.toLowerCase()}.html`), page);
+            fs.writeFileSync(path.join(subDir, `${city.toLowerCase()}.html`), page);
         }
     }
-    console.log("✅ 10K Matrix Step Complete.");
+    console.log("✅ Build complete.");
 }
 
 run().catch(err => { console.error(err); process.exit(1); });
