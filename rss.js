@@ -1,22 +1,36 @@
 /**
- * VULTURE RSS SCRAPER - Node 20 Native Fetch
+ * VULTURE RSS SCRAPER - STABLE VERSION
+ * Uses Node.js 20 Native Fetch (No imports needed)
  */
+const fs = require('fs');
+
 async function getNews() {
-    console.log("📡 Scraping Freshness Data...");
+    console.log("📡 Scraping Freshness Data via Native Fetch...");
     try {
-        // Example: Product Hunt or TechNews RSS
-        const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.producthunt.com/feed'));
+        // Product Hunt RSS Feed
+        const targetUrl = 'https://www.producthunt.com/feed';
+        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
+        
+        const res = await fetch(proxyUrl); // Native fetch call
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        
         const data = await res.json();
         
-        // Simple regex to grab titles from XML
-        const titles = [...data.contents.matchAll(/<title>(.*?)<\/title>/g)].map(t => ({ title: t[1] }));
+        // Regex to grab titles from the XML feed content
+        const titles = [...data.contents.matchAll(/<title>(.*?)<\/title>/g)]
+            .map(t => ({ title: t[1].replace('<![CDATA[', '').replace(']]>', '') }))
+            .filter(t => t.title !== "Product Hunt"); // Filter out the feed title itself
         
-        fs.writeFileSync('rss_data.json', JSON.stringify(titles.slice(0, 10)));
-        console.log("✅ News data cached.");
+        // Save the top 10 headlines for the generator to use
+        fs.writeFileSync('rss_data.json', JSON.stringify(titles.slice(0, 10), null, 2));
+        console.log(`✅ Successfully cached ${titles.length} headlines.`);
+        
     } catch (e) {
-        fs.writeFileSync('rss_data.json', JSON.stringify([{title: "New Productivity Trends for 2026"}]));
+        console.error("⚠️ Scraper Error:", e.message);
+        // Fallback data so the generator doesn't crash
+        const fallback = [{ title: "New Workflow Automation Trends for 2026" }];
+        fs.writeFileSync('rss_data.json', JSON.stringify(fallback));
     }
 }
 
-const fs = require('fs');
 getNews();
